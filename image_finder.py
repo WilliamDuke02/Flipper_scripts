@@ -14,7 +14,7 @@ def unique_file(destination, filename):
 
     return new_filename
 
-def find_and_move_images(destination_folder):
+def find_and_copy_images(destination_folder):
     # Drive root (e.g., C:\ on Windows)
     source_folder = os.path.abspath(os.sep)
 
@@ -30,9 +30,9 @@ def find_and_move_images(destination_folder):
                 # Generate a unique filename
                 unique_name = unique_file(destination_folder, file)
                 destination_file = os.path.join(destination_folder, unique_name)
-                # Move file
-                shutil.move(source_file, destination_file)
+                # Copy file
+                shutil.copy2(source_file, destination_file)
 
 # Example usage
 destination = os.path.join(os.environ['USERPROFILE'], 'Desktop', 'Found Photos')
-find_and_move_images(destination)
+find_and_copy_images(destination)
