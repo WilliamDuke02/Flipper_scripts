@@ -1,6 +1,5 @@
 import os
 import shutil
-import time
 
 def unique_file(destination, filename):
     """Generate a unique filename to avoid overwriting existing files."""
@@ -15,6 +14,14 @@ def unique_file(destination, filename):
     return new_filename
 
 def find_and_copy_images(destination_folder):
+    # List of directories to exclude
+    excluded_directories = [
+        "C:\\Program Files",
+        "C:\\Program Files (x86)",
+        "C:\\Users\\*\\AppData",  # Adjust this path for more specific exclusions
+        # Add any other directories you want to exclude
+    ]
+
     # Drive root (e.g., C:\ on Windows)
     source_folder = os.path.abspath(os.sep)
 
@@ -24,6 +31,10 @@ def find_and_copy_images(destination_folder):
 
     # Walk through the directories
     for root, dirs, files in os.walk(source_folder):
+        # Skip excluded directories
+        if any(root.startswith(excluded) for excluded in excluded_directories):
+            continue
+
         for file in files:
             if file.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.bmp')):
                 source_file = os.path.join(root, file)
