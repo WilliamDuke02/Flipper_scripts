@@ -15,14 +15,17 @@ def unique_file(destination, filename):
 
 def should_exclude(path, exclusions):
     """Determine if a path should be excluded based on exclusion patterns."""
+    # Normalize the path for consistent comparison (convert to lowercase)
+    normalized_path = path.lower()
+    
     for exclusion in exclusions:
-        if exclusion in path:
+        if exclusion.lower() in normalized_path:
             return True
     return False
 
-def find_and_copy_images(destination_folder, exclusions):
-    source_folder = os.path.abspath(os.sep)
-
+def find_and_copy_images(source_folder, destination_folder, exclusions):
+    source_folder = os.path.abspath(source_folder)
+    
     if not os.path.exists(destination_folder):
         os.makedirs(destination_folder)
 
@@ -38,6 +41,7 @@ def find_and_copy_images(destination_folder, exclusions):
                 shutil.copy2(source_file, destination_file)
 
 # Example usage
+source = os.path.abspath(os.sep)  # Use root as the source folder
 destination = os.path.join(os.environ['USERPROFILE'], 'Desktop', 'Found Photos')
 
 # Add common patterns found in the directories you want to exclude
@@ -48,4 +52,4 @@ exclusions = [
     # Add any other common patterns here
 ]
 
-find_and_copy_images(destination, exclusions)
+find_and_copy_images(source, destination, exclusions)
