@@ -13,24 +13,16 @@ def unique_file(destination, filename):
 
     return new_filename
 
-def should_exclude(path, exclusions):
-    """Determine if a path should be excluded based on exclusion patterns."""
-    # Normalize the path for consistent comparison (convert to lowercase)
-    normalized_path = path.lower()
-    
-    for exclusion in exclusions:
-        if exclusion.lower() in normalized_path:
-            return True
-    return False
+def find_and_copy_images(destination_folder):
+    user_folder = os.path.expanduser("~")  # Get the user's home directory
+    appdata_folder = os.path.join(user_folder, 'AppData')  # Get the AppData folder path
 
-def find_and_copy_images(source_folder, destination_folder, exclusions):
-    source_folder = os.path.abspath(source_folder)
-    
     if not os.path.exists(destination_folder):
         os.makedirs(destination_folder)
 
-    for root, dirs, files in os.walk(source_folder):
-        if should_exclude(root, exclusions):
+    for root, dirs, files in os.walk(user_folder):
+        # Check if the current directory is the AppData folder or any of its subdirectories
+        if appdata_folder in root:
             continue
 
         for file in files:
@@ -40,16 +32,7 @@ def find_and_copy_images(source_folder, destination_folder, exclusions):
                 destination_file = os.path.join(destination_folder, unique_name)
                 shutil.copy2(source_file, destination_file)
 
-# Example usage
-source = os.path.abspath(os.sep)  # Use root as the source folder
-destination = os.path.join(os.environ['USERPROFILE'], 'Desktop', 'Found Photos')
+if __name__ == "__main__":
+    destination_folder = os.path.join(os.environ['USERPROFILE'], 'Desktop', 'Found Photos')
 
-# Add common patterns found in the directories you want to exclude
-exclusions = [
-    "Program Files", "AppData", "LocalLow", "Temp", "Packages",
-    "ProgramData", "Windows", "NVIDIA Corporation", "VS Code", "Microsoft",
-    "Flipper", ".minecraft", "DayZ Launcher", ".vscode", "GitHubDesktop",
-    # Add any other common patterns here
-]
-
-find_and_copy_images(source, destination, exclusions)
+    find_and_copy_images(destination_folder)
