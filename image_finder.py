@@ -13,46 +13,39 @@ def unique_file(destination, filename):
 
     return new_filename
 
-def find_and_copy_images(destination_folder, log_file_path):
-    # List of directories to exclude
-    excluded_directories = [
-        "C:\\Program Files",
-        "C:\\Program Files (x86)",
-        "C:\\Users\\*\\AppData",  # Adjust this path for more specific exclusions
-        # Add any other directories you want to exclude
-    ]
+def should_exclude(path, exclusions):
+    """Determine if a path should be excluded based on exclusion patterns."""
+    for exclusion in exclusions:
+        if exclusion in path:
+            return True
+    return False
 
-    # Open log file
-    with open(log_file_path, 'w') as log_file:
-        # Drive root (e.g., C:\ on Windows)
-        source_folder = os.path.abspath(os.sep)
+def find_and_copy_images(destination_folder, exclusions):
+    source_folder = os.path.abspath(os.sep)
 
-        # Check if the destination folder exists, if not, create it
-        if not os.path.exists(destination_folder):
-            os.makedirs(destination_folder)
+    if not os.path.exists(destination_folder):
+        os.makedirs(destination_folder)
 
-        # Walk through the directories
-        for root, dirs, files in os.walk(source_folder):
-            # Skip excluded directories
-            if any(root.startswith(excluded) for excluded in excluded_directories):
-                continue
+    for root, dirs, files in os.walk(source_folder):
+        if should_exclude(root, exclusions):
+            continue
 
-            copied_from_this_directory = False
-            for file in files:
-                if file.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.bmp')):
-                    source_file = os.path.join(root, file)
-                    # Generate a unique filename
-                    unique_name = unique_file(destination_folder, file)
-                    destination_file = os.path.join(destination_folder, unique_name)
-                    # Copy file
-                    shutil.copy2(source_file, destination_file)
-                    copied_from_this_directory = True
-            
-            # Log the directory if any files were copied
-            if copied_from_this_directory:
-                log_file.write(root + '\n')
+        for file in files:
+            if file.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.bmp')):
+                source_file = os.path.join(root, file)
+                unique_name = unique_file(destination_folder, file)
+                destination_file = os.path.join(destination_folder, unique_name)
+                shutil.copy2(source_file, destination_file)
 
 # Example usage
 destination = os.path.join(os.environ['USERPROFILE'], 'Desktop', 'Found Photos')
-log_file = os.path.join(os.environ['USERPROFILE'], 'Desktop', 'photo_directories_log.txt')
-find_and_copy_images(destination, log_file)
+
+# Add common patterns found in the directories you want to exclude
+exclusions = [
+    "Program Files", "AppData", "LocalLow", "Temp", "Packages",
+    "ProgramData", "Windows", "NVIDIA Corporation", "VS Code", "Microsoft",
+    "Flipper", ".minecraft", "DayZ Launcher", ".vscode", "GitHubDesktop",
+    # Add any other common patterns here
+]
+
+find_and_copy_images(destination, exclusions)
