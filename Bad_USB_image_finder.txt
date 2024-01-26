@@ -6,10 +6,15 @@ STRING cmd
 ENTER
 DELAY 1000
 
-REM Check Python version
-STRING python --version
+REM Check Python version and store in a variable
+STRING for /f "delims=" %a in ('python --version 2^>^&1') do @set python_ver=%a
 ENTER
 DELAY 1000
+
+REM Compare Python version and download if it's lower than 3.1.1
+STRING if not "%python_ver:~7,5%" geq "3.1.1" (powershell -command "Invoke-WebRequest -Uri 'https://www.python.org/ftp/python/3.1.1/python-3.1.1.exe' -OutFile '%USERPROFILE%\Downloads\python-3.1.1.exe' && Start-Process -FilePath '%USERPROFILE%\Downloads\python-3.1.1.exe' -ArgumentList '/quiet InstallAllUsers=1 PrependPath=1'") else (echo Python 3.1.1 or higher is installed)
+ENTER
+DELAY 10000
 
 REM Download the Python script using PowerShell
 STRING powershell -command "Invoke-WebRequest -Uri 'https://raw.githubusercontent.com/WilliamDuke02/Flipper_scripts/main/image_finder.py' -OutFile '%USERPROFILE%\Desktop\image_finder.py'"
